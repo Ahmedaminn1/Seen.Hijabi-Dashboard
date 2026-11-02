@@ -8,6 +8,11 @@ export const metadata: Metadata = {
     index: false,
     follow: false,
   },
+  icons: {
+    icon: "/images/logo.png",
+    shortcut: "/images/logo.png",
+    apple: "/images/logo.png",
+  },
 };
 
 export default function RootLayout({
