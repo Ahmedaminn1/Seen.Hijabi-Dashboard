@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { formatPrice } from "@/lib/utils/pricing";
+import { formatPrice, formatDate } from "@/lib/utils/pricing";
 import { updateOrderStatus, updatePaymentStatus } from "@/lib/actions/orders";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -206,8 +206,8 @@ export function OrdersTable({ initialOrders }: { initialOrders: OrderData[] }) {
                   <h3 className="text-sm font-semibold text-[var(--foreground)] font-mono">
                     {selectedOrder.orderNumber}
                   </h3>
-                  <p className="text-[11px] text-[var(--muted-foreground)]">
-                    {new Date(selectedOrder.createdAt).toLocaleString("ar-EG")}
+                  <p className="text-[11px] text-[var(--muted-foreground)]" suppressHydrationWarning>
+                    {formatDate(selectedOrder.createdAt)}
                   </p>
                 </div>
                 <Badge variant="outline" className="text-[10px] uppercase font-mono">

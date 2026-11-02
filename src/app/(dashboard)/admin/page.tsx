@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { formatPrice } from "@/lib/utils/pricing";
+import { formatPrice, formatDate } from "@/lib/utils/pricing";
 import {
   DollarSign,
   ShoppingBag,
@@ -237,8 +237,8 @@ export default async function AdminDashboardOverviewPage() {
                         {order.orderStatus}
                       </Badge>
                     </td>
-                    <td className="px-4 py-3 text-[var(--muted-foreground)]">
-                      {new Date(order.createdAt).toLocaleDateString("ar-EG")}
+                    <td className="px-4 py-3 text-[var(--muted-foreground)]" suppressHydrationWarning>
+                      {formatDate(order.createdAt)}
                     </td>
                   </tr>
                 ))
