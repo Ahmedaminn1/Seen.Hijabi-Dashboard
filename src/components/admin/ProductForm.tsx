@@ -374,17 +374,30 @@ export function ProductForm({ categories, initialProduct }: ProductFormProps) {
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="product-slug" className="text-xs font-medium">
-              الرابط الدائم | Slug *
-            </Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="product-slug" className="text-xs font-medium">
+                الرابط الدائم | Slug *
+              </Label>
+              <span className="text-[10px] text-[var(--muted-foreground)]">
+                (رابط صفحة المنتج)
+              </span>
+            </div>
             <Input
               id="product-slug"
               required
               value={slug}
               onChange={(e) => setSlug(e.target.value)}
-              placeholder="silk-maxi-dress-beige"
+              placeholder="مثال: silk-blouse أو بلوزه"
               className="text-xs h-9 font-mono"
             />
+            <p className="text-[11px] text-[var(--muted-foreground)] leading-tight">
+              💡 هو الاسم الذي يظهر في رابط المتصفح:{" "}
+              <span className="text-emerald-700 bg-emerald-50 px-1 py-0.5 rounded text-[10px] font-mono" dir="ltr">
+                /products/{slug || "blouse"}
+              </span>
+              <br />
+              يُفضل كتابته بحروف إنجليزية قصيرة (مثل: <span className="font-mono text-[10px]" dir="ltr">silk-blouse</span>).
+            </p>
           </div>
         </div>
 
