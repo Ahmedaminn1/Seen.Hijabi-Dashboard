@@ -286,10 +286,25 @@ export function OrdersTable({ initialOrders }: { initialOrders: OrderData[] }) {
                   </span>
                 </p>
                 {selectedOrder.notes && (
-                  <p className="flex items-start gap-1 bg-amber-50/50 p-2 border border-amber-200 text-amber-900 rounded-sm">
-                    <FileText className="w-3 h-3 shrink-0 mt-0.5" />
-                    <span>ملاحظات: {selectedOrder.notes}</span>
-                  </p>
+                  <div className="space-y-1.5">
+                    <p className="flex items-start gap-1 bg-amber-50/50 p-2 border border-amber-200 text-amber-900 rounded-sm">
+                      <FileText className="w-3 h-3 shrink-0 mt-0.5" />
+                      <span className="whitespace-pre-line">ملاحظات: {selectedOrder.notes}</span>
+                    </p>
+                    {selectedOrder.notes.includes("http") && (
+                      <div className="p-2 bg-emerald-50 border border-emerald-200 rounded-sm flex items-center justify-between">
+                        <span className="text-[11px] text-emerald-800 font-medium">إثبات تحويل الشحن متوفر:</span>
+                        <a
+                          href={selectedOrder.notes.split("[إثبات تحويل مصاريف الشحن]: ")[1]?.split("\n")[0] || "#"}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-xs bg-emerald-700 text-white px-2.5 py-1 rounded hover:bg-emerald-800 transition-colors inline-flex items-center gap-1 font-medium"
+                        >
+                          عرض صورة الإيصال 📸
+                        </a>
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
 
@@ -328,13 +343,19 @@ export function OrdersTable({ initialOrders }: { initialOrders: OrderData[] }) {
                   </div>
                 )}
                 <div className="flex justify-between text-[var(--muted-foreground)]">
-                  <span>مصاريف الشحن:</span>
-                  <span>
-                    {selectedOrder.shippingFee === 0 ? "مجاني" : formatPrice(selectedOrder.shippingFee)}
+                  <span>مصاريف الشحن ({selectedOrder.governorate}):</span>
+                  <span className="font-semibold text-amber-900">
+                    {formatPrice(selectedOrder.shippingFee)} (مقدم محول)
+                  </span>
+                </div>
+                <div className="flex justify-between text-[var(--muted-foreground)]">
+                  <span>المتبقي كاش عند الاستلام:</span>
+                  <span className="font-semibold text-emerald-700">
+                    {formatPrice(selectedOrder.subtotal)}
                   </span>
                 </div>
                 <div className="flex justify-between font-semibold text-sm pt-2 border-t border-[var(--border)] text-[var(--foreground)]">
-                  <span>الإجمالي النهائي:</span>
+                  <span>الإجمالي الكلي للطلب:</span>
                   <span>{formatPrice(selectedOrder.totalAmount)}</span>
                 </div>
               </div>
