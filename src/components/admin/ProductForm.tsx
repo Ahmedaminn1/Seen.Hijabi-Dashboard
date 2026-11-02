@@ -298,7 +298,7 @@ export function ProductForm({ categories }: ProductFormProps) {
       )}
 
       {/* 1. Basic Product Information */}
-      <div className="bg-[var(--card)] border border-[var(--border)] p-6 space-y-4">
+      <div className="bg-[var(--card)] border border-[var(--border)] p-4 sm:p-6 space-y-4">
         <h2 className="text-sm font-semibold text-[var(--foreground)] border-b border-[var(--border)] pb-3">
           1. المعلومات الأساسية | Basic Information
         </h2>
@@ -387,7 +387,7 @@ export function ProductForm({ categories }: ProductFormProps) {
       </div>
 
       {/* 2. Pricing & Discounts */}
-      <div className="bg-[var(--card)] border border-[var(--border)] p-6 space-y-4">
+      <div className="bg-[var(--card)] border border-[var(--border)] p-4 sm:p-6 space-y-4">
         <h2 className="text-sm font-semibold text-[var(--foreground)] border-b border-[var(--border)] pb-3">
           2. السعر والخصومات | Pricing & Discounts
         </h2>
@@ -446,7 +446,7 @@ export function ProductForm({ categories }: ProductFormProps) {
       </div>
 
       {/* 3. Product Images */}
-      <div className="bg-[var(--card)] border border-[var(--border)] p-6 space-y-4">
+      <div className="bg-[var(--card)] border border-[var(--border)] p-4 sm:p-6 space-y-4">
         <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
           <h2 className="text-sm font-semibold text-[var(--foreground)]">
             3. صور المنتج | Product Images
@@ -543,7 +543,7 @@ export function ProductForm({ categories }: ProductFormProps) {
       </div>
 
       {/* 4. Colors & Sizes Setup */}
-      <div className="bg-[var(--card)] border border-[var(--border)] p-6 space-y-6">
+      <div className="bg-[var(--card)] border border-[var(--border)] p-4 sm:p-6 space-y-6">
         <h2 className="text-sm font-semibold text-[var(--foreground)] border-b border-[var(--border)] pb-3">
           4. الألوان والمقاسات | Colors & Sizes
         </h2>
@@ -639,7 +639,7 @@ export function ProductForm({ categories }: ProductFormProps) {
       </div>
 
       {/* 5. Variant & Inventory Matrix */}
-      <div className="bg-[var(--card)] border border-[var(--border)] p-6 space-y-4">
+      <div className="bg-[var(--card)] border border-[var(--border)] p-4 sm:p-6 space-y-4">
         <div>
           <h2 className="text-sm font-semibold text-[var(--foreground)]">
             5. مصفوفة المتغيرات والمخزون | Variant & Inventory Matrix
@@ -649,8 +649,8 @@ export function ProductForm({ categories }: ProductFormProps) {
           </p>
         </div>
 
-        <div className="border border-[var(--border)] overflow-x-auto">
-          <table className="w-full text-xs text-left">
+        <div className="border border-[var(--border)] overflow-x-auto min-w-0">
+          <table className="w-full text-xs text-left min-w-[580px]">
             <thead className="bg-[var(--muted)] text-[var(--muted-foreground)] uppercase text-[10px]">
               <tr>
                 <th className="px-4 py-2.5">اللون | Color</th>
@@ -726,7 +726,7 @@ export function ProductForm({ categories }: ProductFormProps) {
       </div>
 
       {/* 6. Badges & Tags */}
-      <div className="bg-[var(--card)] border border-[var(--border)] p-6 space-y-4">
+      <div className="bg-[var(--card)] border border-[var(--border)] p-4 sm:p-6 space-y-4">
         <h2 className="text-sm font-semibold text-[var(--foreground)] border-b border-[var(--border)] pb-3">
           6. وسوم التمييز | Promotional Badges
         </h2>
@@ -774,20 +774,20 @@ export function ProductForm({ categories }: ProductFormProps) {
       </div>
 
       {/* Submit Buttons */}
-      <div className="flex items-center justify-end gap-3 pt-4">
+      <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-3 pt-4">
         <Button
           type="button"
           variant="outline"
           onClick={() => router.back()}
           disabled={isSubmitting}
-          className="text-xs h-9"
+          className="text-xs h-10 sm:h-9 w-full sm:w-auto"
         >
           إلغاء | Cancel
         </Button>
         <Button
           type="submit"
           disabled={isSubmitting}
-          className="text-xs h-9 bg-[var(--primary)] text-[var(--primary-foreground)] hover:bg-[var(--primary)]/90 px-6 font-medium"
+          className="text-xs h-10 sm:h-9 bg-[var(--primary)] text-[var(--primary-foreground)] hover:bg-[var(--primary)]/90 px-6 font-medium w-full sm:w-auto"
         >
           {isSubmitting ? "جاري الحفظ..." : "حفظ ونشر المنتج | Save Product"}
         </Button>

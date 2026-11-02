@@ -91,7 +91,7 @@ export function SettingsForm({ initialStore, initialShipping }: SettingsFormProp
       )}
 
       {/* 1. General Brand Settings */}
-      <div className="bg-[var(--card)] border border-[var(--border)] p-6 space-y-4">
+      <div className="bg-[var(--card)] border border-[var(--border)] p-4 sm:p-6 space-y-4">
         <h2 className="text-sm font-semibold text-[var(--foreground)] border-b border-[var(--border)] pb-3">
           1. بيانات المتجر والهوية | Store Profile
         </h2>
@@ -129,7 +129,7 @@ export function SettingsForm({ initialStore, initialShipping }: SettingsFormProp
       </div>
 
       {/* 2. Announcement Bar */}
-      <div className="bg-[var(--card)] border border-[var(--border)] p-6 space-y-4">
+      <div className="bg-[var(--card)] border border-[var(--border)] p-4 sm:p-6 space-y-4">
         <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
           <h2 className="text-sm font-semibold text-[var(--foreground)]">
             2. شريط الإعلانات أعلى الصفحة | Announcement Bar
@@ -158,7 +158,7 @@ export function SettingsForm({ initialStore, initialShipping }: SettingsFormProp
       </div>
 
       {/* 3. Shipping & Free Shipping Rules */}
-      <div className="bg-[var(--card)] border border-[var(--border)] p-6 space-y-4">
+      <div className="bg-[var(--card)] border border-[var(--border)] p-4 sm:p-6 space-y-4">
         <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
           <div>
             <h2 className="text-sm font-semibold text-[var(--foreground)]">
@@ -226,7 +226,7 @@ export function SettingsForm({ initialStore, initialShipping }: SettingsFormProp
       </div>
 
       {/* 4. Social & WhatsApp */}
-      <div className="bg-[var(--card)] border border-[var(--border)] p-6 space-y-4">
+      <div className="bg-[var(--card)] border border-[var(--border)] p-4 sm:p-6 space-y-4">
         <h2 className="text-sm font-semibold text-[var(--foreground)] border-b border-[var(--border)] pb-3">
           4. وسائل التواصل والواتساب | Social & Contacts
         </h2>
@@ -278,7 +278,7 @@ export function SettingsForm({ initialStore, initialShipping }: SettingsFormProp
         <Button
           type="submit"
           disabled={isSaving}
-          className="text-xs h-9 px-6 bg-[var(--primary)] text-[var(--primary-foreground)] hover:bg-[var(--primary)]/90 font-medium"
+          className="text-xs h-10 sm:h-9 px-6 bg-[var(--primary)] text-[var(--primary-foreground)] hover:bg-[var(--primary)]/90 font-medium w-full sm:w-auto"
         >
           {isSaving ? "جاري الحفظ..." : "حفظ التغييرات | Save Settings"}
         </Button>

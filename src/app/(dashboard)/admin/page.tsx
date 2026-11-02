@@ -117,11 +117,11 @@ export default async function AdminDashboardOverviewPage() {
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       {/* Page Title */}
-      <div className="flex justify-between items-center pb-4 border-b border-[var(--border)]">
+      <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3 pb-4 border-b border-[var(--border)]">
         <div>
-          <h1 className="text-xl font-serif tracking-tight text-[var(--foreground)]">
+          <h1 className="text-lg sm:text-xl font-serif tracking-tight text-[var(--foreground)]">
             نظرة عامة على المتجر | Store Overview
           </h1>
           <p className="text-xs text-[var(--muted-foreground)] mt-0.5">
@@ -131,31 +131,31 @@ export default async function AdminDashboardOverviewPage() {
 
         <Link
           href="/admin/products/new"
-          className="inline-flex items-center gap-2 bg-[var(--primary)] text-[var(--primary-foreground)] text-xs font-medium px-4 py-2 rounded-sm hover:bg-[var(--primary)]/90 transition-colors duration-150"
+          className="inline-flex items-center justify-center gap-2 bg-[var(--primary)] text-[var(--primary-foreground)] text-xs font-medium px-4 py-2.5 rounded-sm hover:bg-[var(--primary)]/90 transition-colors duration-150 w-full sm:w-auto"
         >
           <span>إضافة منتج جديد | New Product</span>
         </Link>
       </div>
 
       {/* KPI Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4">
         {statCards.map((stat, i) => {
           const Icon = stat.icon;
           return (
             <div
               key={i}
-              className="bg-[var(--card)] border border-[var(--border)] p-4 flex items-center justify-between"
+              className="bg-[var(--card)] border border-[var(--border)] p-3 sm:p-4 flex items-center justify-between"
             >
-              <div>
-                <p className="text-[11px] text-[var(--muted-foreground)]">
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] sm:text-[11px] text-[var(--muted-foreground)] truncate">
                   {stat.title}
                 </p>
-                <p className="text-xl font-semibold text-[var(--foreground)] mt-1 tracking-tight">
+                <p className="text-base sm:text-xl font-semibold text-[var(--foreground)] mt-0.5 sm:mt-1 tracking-tight truncate">
                   {stat.value}
                 </p>
               </div>
               <div
-                className={`p-2 rounded-sm ${
+                className={`p-1.5 sm:p-2 rounded-sm shrink-0 ml-2 ${
                   stat.warn
                     ? "bg-amber-50 text-amber-600"
                     : stat.highlight
@@ -163,7 +163,7 @@ export default async function AdminDashboardOverviewPage() {
                     : "bg-[var(--muted)] text-[var(--foreground)]"
                 }`}
               >
-                <Icon className="w-5 h-5" />
+                <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
             </div>
           );
@@ -172,26 +172,26 @@ export default async function AdminDashboardOverviewPage() {
 
       {/* Recent Orders Section */}
       <div className="bg-[var(--card)] border border-[var(--border)]">
-        <div className="p-4 border-b border-[var(--border)] flex justify-between items-center">
+        <div className="p-3.5 sm:p-4 border-b border-[var(--border)] flex justify-between items-center gap-2">
           <div>
-            <h2 className="text-sm font-medium text-[var(--foreground)]">
+            <h2 className="text-xs sm:text-sm font-medium text-[var(--foreground)]">
               أحدث الطلبات | Recent Orders
             </h2>
-            <p className="text-[11px] text-[var(--muted-foreground)]">
+            <p className="text-[10px] sm:text-[11px] text-[var(--muted-foreground)]">
               آخر 5 طلبات تم تسجيلها في المتجر
             </p>
           </div>
           <Link
             href="/admin/orders"
-            className="text-xs text-[var(--foreground)] hover:underline inline-flex items-center gap-1"
+            className="text-xs text-[var(--foreground)] hover:underline inline-flex items-center gap-1 shrink-0"
           >
-            <span>عرض كل الطلبات | View all</span>
+            <span>عرض الكل | View all</span>
             <ArrowUpRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs text-left">
+        <div className="overflow-x-auto min-w-0">
+          <table className="w-full text-xs text-left min-w-[550px]">
             <thead className="bg-[var(--muted)] text-[var(--muted-foreground)] uppercase tracking-wider text-[10px]">
               <tr>
                 <th className="px-4 py-3">رقم الطلب | Order #</th>

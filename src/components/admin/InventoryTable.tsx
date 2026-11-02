@@ -72,12 +72,12 @@ export function InventoryTable({ initialVariants }: { initialVariants: VariantIt
           className="text-xs h-9 sm:max-w-xs"
         />
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-1.5">
           <Button
             variant={filter === "all" ? "default" : "outline"}
             size="sm"
             onClick={() => setFilter("all")}
-            className="text-xs h-8"
+            className="text-xs h-8 flex-1 sm:flex-initial"
           >
             الكل ({variants.length})
           </Button>
@@ -85,7 +85,7 @@ export function InventoryTable({ initialVariants }: { initialVariants: VariantIt
             variant={filter === "low" ? "default" : "outline"}
             size="sm"
             onClick={() => setFilter("low")}
-            className="text-xs h-8"
+            className="text-xs h-8 flex-1 sm:flex-initial"
           >
             مخزون منخفض ({variants.filter((v) => v.currentStock > 0 && v.currentStock <= v.lowStockThreshold).length})
           </Button>
@@ -93,7 +93,7 @@ export function InventoryTable({ initialVariants }: { initialVariants: VariantIt
             variant={filter === "out" ? "default" : "outline"}
             size="sm"
             onClick={() => setFilter("out")}
-            className="text-xs h-8"
+            className="text-xs h-8 flex-1 sm:flex-initial"
           >
             نفد المخزون ({variants.filter((v) => v.currentStock === 0).length})
           </Button>
@@ -102,8 +102,8 @@ export function InventoryTable({ initialVariants }: { initialVariants: VariantIt
 
       {/* Table */}
       <div className="bg-[var(--card)] border border-[var(--border)] overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs text-left">
+        <div className="overflow-x-auto min-w-0">
+          <table className="w-full text-xs text-left min-w-[680px]">
             <thead className="bg-[var(--muted)] text-[var(--muted-foreground)] uppercase text-[10px]">
               <tr>
                 <th className="px-4 py-3">المنتج | Product</th>

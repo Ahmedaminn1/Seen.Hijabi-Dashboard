@@ -40,7 +40,7 @@ export default async function AdminProductsPage() {
 
         <Link
           href="/admin/products/new"
-          className="inline-flex items-center gap-2 bg-[var(--primary)] text-[var(--primary-foreground)] text-xs font-medium px-4 py-2 rounded-sm hover:bg-[var(--primary)]/90 transition-colors duration-150 self-start sm:self-auto"
+          className="inline-flex items-center justify-center gap-2 bg-[var(--primary)] text-[var(--primary-foreground)] text-xs font-medium px-4 py-2.5 rounded-sm hover:bg-[var(--primary)]/90 transition-colors duration-150 w-full sm:w-auto"
         >
           <Plus className="w-4 h-4" />
           <span>إضافة منتج جديد | Add Product</span>
@@ -49,8 +49,8 @@ export default async function AdminProductsPage() {
 
       {/* Products Table */}
       <div className="bg-[var(--card)] border border-[var(--border)] overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs text-left">
+        <div className="overflow-x-auto min-w-0">
+          <table className="w-full text-xs text-left min-w-[750px]">
             <thead className="bg-[var(--muted)] text-[var(--muted-foreground)] uppercase tracking-wider text-[10px]">
               <tr>
                 <th className="px-4 py-3">الصورة | Image</th>

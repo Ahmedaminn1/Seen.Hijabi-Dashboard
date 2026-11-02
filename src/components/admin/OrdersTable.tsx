@@ -129,8 +129,8 @@ export function OrdersTable({ initialOrders }: { initialOrders: OrderData[] }) {
       {/* Orders Table */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 bg-[var(--card)] border border-[var(--border)] overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-xs text-left">
+          <div className="overflow-x-auto min-w-0">
+            <table className="w-full text-xs text-left min-w-[620px]">
               <thead className="bg-[var(--muted)] text-[var(--muted-foreground)] uppercase text-[10px]">
                 <tr>
                   <th className="px-4 py-3">رقم الطلب | Order #</th>
@@ -210,9 +210,18 @@ export function OrdersTable({ initialOrders }: { initialOrders: OrderData[] }) {
                     {formatDate(selectedOrder.createdAt)}
                   </p>
                 </div>
-                <Badge variant="outline" className="text-[10px] uppercase font-mono">
-                  {selectedOrder.source}
-                </Badge>
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="text-[10px] uppercase font-mono">
+                    {selectedOrder.source}
+                  </Badge>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedOrder(null)}
+                    className="lg:hidden px-2 py-0.5 text-xs text-[var(--muted-foreground)] hover:text-[var(--foreground)] border border-[var(--border)] rounded-sm"
+                  >
+                    إغلاق &times;
+                  </button>
+                </div>
               </div>
 
               {/* Status Controls */}
