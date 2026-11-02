@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import type { ActionResult } from "@/lib/actions/products";
+import { revalidateStore } from "@/lib/revalidate-store";
 
 export interface StoreSettingsInput {
   storeName: string;
@@ -78,6 +79,14 @@ export async function updateStoreSettings(
     });
 
     revalidatePath("/", "layout");
+
+    // 🔴 Revalidate Website cache (cross-process) — layout for announcement bar, storeName etc.
+    await revalidateStore({
+      paths: ["/", "/products"],
+      layout: true,
+      action: "update_settings",
+    });
+
     return { success: true };
   } catch (error) {
     console.error("Error updating store settings:", error);
@@ -98,6 +107,14 @@ export async function updateShippingSettings(
     revalidatePath("/", "layout");
     revalidatePath("/cart");
     revalidatePath("/checkout");
+
+    // 🔴 Revalidate Website cache (cross-process) — shipping affects cart/checkout
+    await revalidateStore({
+      paths: ["/", "/cart", "/checkout"],
+      layout: true,
+      action: "update_shipping",
+    });
+
     return { success: true };
   } catch (error) {
     console.error("Error updating shipping settings:", error);

@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import type { ActionResult } from "@/lib/actions/products";
 import type { DbOrderStatus, DbPaymentStatus } from "@/types";
+import { revalidateStore } from "@/lib/revalidate-store";
 
 /**
  * Server Action: Update Order Status
@@ -57,6 +58,13 @@ export async function updateOrderStatus(
     revalidatePath("/admin/orders");
     revalidatePath("/admin/inventory");
     revalidatePath("/admin");
+
+    // 🔴 Revalidate Website cache (cross-process) — stock might have restored
+    await revalidateStore({
+      paths: ["/", "/products"],
+      action: "update_order",
+    });
+
     return { success: true };
   } catch (error) {
     console.error("Error updating order status:", error);

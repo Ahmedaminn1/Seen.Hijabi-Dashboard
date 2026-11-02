@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { productSchema, type ProductFormValues } from "@/lib/validations/product";
+import { revalidateStore } from "@/lib/revalidate-store";
 
 export type ActionResult<T = unknown> = {
   success: boolean;
@@ -117,9 +118,17 @@ export async function createProduct(
       return newProduct;
     });
 
+    // Revalidate dashboard cache
     revalidatePath("/admin/products");
     revalidatePath("/products");
     revalidatePath("/");
+
+    // 🔴 Revalidate Website cache (cross-process)
+    await revalidateStore({
+      paths: ["/", "/products"],
+      action: "create_product",
+      productId: product.id,
+    });
 
     return { success: true, data: { id: product.id } };
   } catch (error: unknown) {
@@ -134,6 +143,12 @@ export async function createProduct(
  */
 export async function deleteProduct(productId: string): Promise<ActionResult> {
   try {
+    // Get slug before deleting so we can revalidate its page too
+    const product = await prisma.product.findUnique({
+      where: { id: productId },
+      select: { slug: true },
+    });
+
     await prisma.product.delete({
       where: { id: productId },
     });
@@ -141,6 +156,18 @@ export async function deleteProduct(productId: string): Promise<ActionResult> {
     revalidatePath("/admin/products");
     revalidatePath("/products");
     revalidatePath("/");
+
+    // 🔴 Revalidate Website cache (cross-process)
+    const paths = ["/", "/products"];
+    if (product?.slug) {
+      paths.push(`/products/${product.slug}`);
+    }
+    await revalidateStore({
+      paths,
+      action: "delete_product",
+      productId,
+    });
+
     return { success: true };
   } catch (error: unknown) {
     console.error("Error deleting product:", error);
@@ -156,14 +183,27 @@ export async function toggleProductStatus(
   isActive: boolean
 ): Promise<ActionResult> {
   try {
-    await prisma.product.update({
+    const product = await prisma.product.update({
       where: { id: productId },
       data: { isActive },
+      select: { slug: true },
     });
 
     revalidatePath("/admin/products");
     revalidatePath("/products");
     revalidatePath("/");
+
+    // 🔴 Revalidate Website cache (cross-process)
+    const paths = ["/", "/products"];
+    if (product?.slug) {
+      paths.push(`/products/${product.slug}`);
+    }
+    await revalidateStore({
+      paths,
+      action: "delete_product",
+      productId,
+    });
+
     return { success: true };
   } catch (error: unknown) {
     console.error("Error toggling product status:", error);
@@ -183,6 +223,12 @@ export async function updateVariantStock(
       return { success: false, error: "الكمية لا يمكن أن تكون سالبة" };
     }
 
+    // Get product slug so we can revalidate the product detail page too
+    const variant = await prisma.productVariant.findUnique({
+      where: { id: variantId },
+      select: { product: { select: { slug: true } } },
+    });
+
     await prisma.inventory.update({
       where: { variantId },
       data: { quantity: newQuantity },
@@ -191,10 +237,20 @@ export async function updateVariantStock(
     revalidatePath("/admin/inventory");
     revalidatePath("/admin/products");
     revalidatePath("/products");
+
+    // 🔴 Revalidate Website cache (cross-process)
+    const paths = ["/", "/products"];
+    if (variant?.product?.slug) {
+      paths.push(`/products/${variant.product.slug}`);
+    }
+    await revalidateStore({
+      paths,
+      action: "update_stock",
+    });
+
     return { success: true };
   } catch (error: unknown) {
     console.error("Error updating stock:", error);
     return { success: false, error: "تعذر تحديث كمية المخزون" };
   }
 }
-
