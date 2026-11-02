@@ -63,7 +63,7 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
             </div>
           )}
 
-          <form action={formAction} className="space-y-4">
+          <form action={formAction} className="space-y-4" suppressHydrationWarning>
             <input type="hidden" name="redirectTo" value={redirectTo} />
 
             <div className="space-y-1.5">
@@ -76,6 +76,7 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
                 type="email"
                 autoComplete="email"
                 required
+                suppressHydrationWarning
                 placeholder="admin@seenhijabi.com"
                 className="h-10 text-sm bg-transparent border-[var(--border)] focus-visible:ring-1 focus-visible:ring-[var(--brand-gold)]"
               />
@@ -96,6 +97,7 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
                 type="password"
                 autoComplete="current-password"
                 required
+                suppressHydrationWarning
                 placeholder="••••••••"
                 className="h-10 text-sm bg-transparent border-[var(--border)] focus-visible:ring-1 focus-visible:ring-[var(--brand-gold)]"
               />
@@ -104,6 +106,7 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
             <Button
               type="submit"
               disabled={isPending}
+              suppressHydrationWarning
               className="w-full h-10 mt-2 bg-[var(--primary)] text-[var(--primary-foreground)] hover:bg-[var(--primary)]/90 text-sm font-medium rounded-sm transition-colors duration-150"
             >
               <Lock className="w-3.5 h-3.5 mr-2" />
