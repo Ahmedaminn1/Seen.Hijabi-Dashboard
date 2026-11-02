@@ -48,6 +48,27 @@ const statusOptions: { value: DbOrderStatus; label: string }[] = [
   { value: "CANCELLED", label: "ملغي | Cancelled" },
 ];
 
+function parseOrderNotes(notes: string | null) {
+  if (!notes) return { userNotes: null, transferPhone: null, receiptUrl: null };
+
+  const transferMatch = notes.match(/رقم التحويل:\s*([^\n\r]+)/);
+  const transferPhone = transferMatch ? transferMatch[1].trim() : null;
+
+  const receiptMatch = notes.match(/\[إثبات تحويل مصاريف الشحن\]:\s*(https?:\/\/[^\s\n\r]+)/);
+  const receiptUrl = receiptMatch ? receiptMatch[1].trim() : null;
+
+  const cleanedNotes = notes
+    .replace(/رقم التحويل:\s*[^\n\r]+/g, "")
+    .replace(/\[إثبات تحويل مصاريف الشحن\]:\s*https?:\/\/[^\s\n\r]+/g, "")
+    .trim();
+
+  return {
+    userNotes: cleanedNotes.length > 0 ? cleanedNotes : null,
+    transferPhone,
+    receiptUrl,
+  };
+}
+
 export function OrdersTable({ initialOrders }: { initialOrders: OrderData[] }) {
   const [orders, setOrders] = useState<OrderData[]>(initialOrders);
   const [selectedStatus, setSelectedStatus] = useState<string>("ALL");
@@ -162,7 +183,12 @@ export function OrdersTable({ initialOrders }: { initialOrders: OrderData[] }) {
                         }`}
                       >
                         <td className="px-4 py-3 font-mono font-medium">
-                          {order.orderNumber}
+                          <div>{order.orderNumber}</div>
+                          {order.notes?.includes("http") && (
+                            <span className="inline-block mt-0.5 text-[9px] bg-emerald-100 text-emerald-800 font-sans px-1.5 py-0.2 rounded font-medium">
+                              📸 إيصال مرفق
+                            </span>
+                          )}
                         </td>
                         <td className="px-4 py-3">
                           <p className="font-medium text-[var(--foreground)]">
@@ -285,27 +311,51 @@ export function OrdersTable({ initialOrders }: { initialOrders: OrderData[] }) {
                     {selectedOrder.governorate} - {selectedOrder.city} - {selectedOrder.address}
                   </span>
                 </p>
-                {selectedOrder.notes && (
-                  <div className="space-y-1.5">
-                    <p className="flex items-start gap-1 bg-amber-50/50 p-2 border border-amber-200 text-amber-900 rounded-sm">
-                      <FileText className="w-3 h-3 shrink-0 mt-0.5" />
-                      <span className="whitespace-pre-line">ملاحظات: {selectedOrder.notes}</span>
-                    </p>
-                    {selectedOrder.notes.includes("http") && (
-                      <div className="p-2 bg-emerald-50 border border-emerald-200 rounded-sm flex items-center justify-between">
-                        <span className="text-[11px] text-emerald-800 font-medium">إثبات تحويل الشحن متوفر:</span>
-                        <a
-                          href={selectedOrder.notes.split("[إثبات تحويل مصاريف الشحن]: ")[1]?.split("\n")[0] || "#"}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-xs bg-emerald-700 text-white px-2.5 py-1 rounded hover:bg-emerald-800 transition-colors inline-flex items-center gap-1 font-medium"
-                        >
-                          عرض صورة الإيصال 📸
-                        </a>
-                      </div>
-                    )}
-                  </div>
-                )}
+                {selectedOrder.notes && (() => {
+                  const { userNotes, transferPhone, receiptUrl } = parseOrderNotes(selectedOrder.notes);
+                  return (
+                    <div className="space-y-2 pt-1">
+                      {(transferPhone || receiptUrl) && (
+                        <div className="p-3 bg-amber-50/80 border border-amber-300 rounded-sm space-y-2 text-amber-950">
+                          <p className="font-semibold text-xs flex items-center gap-1.5 text-amber-900">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                            <span>بيانات تحويل مصاريف الشحن ({formatPrice(selectedOrder.shippingFee)})</span>
+                          </p>
+
+                          {transferPhone && (
+                            <div className="flex items-center justify-between text-xs bg-white/90 p-2 rounded border border-amber-200">
+                              <span className="text-[11px] text-amber-900 font-medium">رقم المحول منه:</span>
+                              <span className="font-mono font-bold text-xs bg-amber-100 px-2 py-0.5 rounded text-amber-950" dir="ltr">
+                                {transferPhone}
+                              </span>
+                            </div>
+                          )}
+
+                          {receiptUrl && (
+                            <div className="flex items-center justify-between text-xs bg-white/90 p-2 rounded border border-amber-200">
+                              <span className="text-[11px] text-emerald-800 font-medium">إثبات التحويل (سكرين شوت):</span>
+                              <a
+                                href={receiptUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-xs bg-emerald-700 text-white px-2.5 py-1 rounded hover:bg-emerald-800 transition-colors inline-flex items-center gap-1 font-medium cursor-pointer"
+                              >
+                                عرض صورة الإيصال 📸
+                              </a>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {userNotes && (
+                        <p className="flex items-start gap-1 bg-gray-50 p-2 border border-gray-200 text-gray-800 rounded-sm">
+                          <FileText className="w-3 h-3 shrink-0 mt-0.5 text-gray-500" />
+                          <span className="whitespace-pre-line">ملاحظات العميل: {userNotes}</span>
+                        </p>
+                      )}
+                    </div>
+                  );
+                })()}
               </div>
 
               {/* Order Items */}
