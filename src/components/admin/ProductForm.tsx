@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { createProduct } from "@/lib/actions/products";
+import { createProduct, updateProduct } from "@/lib/actions/products";
 import { uploadProductImage } from "@/lib/actions/upload";
 import { formatPrice } from "@/lib/utils/pricing";
 import { Button } from "@/components/ui/button";
@@ -17,30 +17,59 @@ interface CategoryOption {
   name: string;
 }
 
-interface ProductFormProps {
-  categories: CategoryOption[];
+export interface InitialProductData {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  price: number;
+  isDiscountActive: boolean;
+  discountPercent: number | null;
+  categoryId: string | null;
+  isFeatured: boolean;
+  isNewArrival: boolean;
+  isBestSeller: boolean;
+  isActive: boolean;
+  images: Array<{ url: string; altText: string; isPrimary: boolean; displayOrder?: number }>;
+  colors: Array<{ name: string; hexCode: string }>;
+  sizes: Array<{ name: string; displayOrder: number }>;
+  variants: Array<{
+    colorName: string;
+    sizeName: string;
+    sku?: string | null;
+    stock: number;
+  }>;
 }
 
-export function ProductForm({ categories }: ProductFormProps) {
+interface ProductFormProps {
+  categories: CategoryOption[];
+  initialProduct?: InitialProductData;
+}
+
+export function ProductForm({ categories, initialProduct }: ProductFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Form State
-  const [name, setName] = useState("");
-  const [slug, setSlug] = useState("");
-  const [description, setDescription] = useState("");
-  const [price, setPrice] = useState<number>(0);
-  const [isDiscountActive, setIsDiscountActive] = useState(false);
-  const [discountPercent, setDiscountPercent] = useState<number>(0);
-  const [categoryId, setCategoryId] = useState("");
-  const [isFeatured, setIsFeatured] = useState(false);
-  const [isNewArrival, setIsNewArrival] = useState(true);
-  const [isBestSeller, setIsBestSeller] = useState(false);
-  const [isActive, setIsActive] = useState(true);
+  const [name, setName] = useState(initialProduct?.name ?? "");
+  const [slug, setSlug] = useState(initialProduct?.slug ?? "");
+  const [description, setDescription] = useState(initialProduct?.description ?? "");
+  const [price, setPrice] = useState<number>(initialProduct?.price ?? 0);
+  const [isDiscountActive, setIsDiscountActive] = useState(initialProduct?.isDiscountActive ?? false);
+  const [discountPercent, setDiscountPercent] = useState<number>(initialProduct?.discountPercent ?? 0);
+  const [categoryId, setCategoryId] = useState(initialProduct?.categoryId ?? "");
+  const [isFeatured, setIsFeatured] = useState(initialProduct?.isFeatured ?? false);
+  const [isNewArrival, setIsNewArrival] = useState(initialProduct?.isNewArrival ?? true);
+  const [isBestSeller, setIsBestSeller] = useState(initialProduct?.isBestSeller ?? false);
+  const [isActive, setIsActive] = useState(initialProduct?.isActive ?? true);
 
   // Images state
-  const [images, setImages] = useState<Array<{ url: string; altText: string; isPrimary: boolean }>>([]);
+  const [images, setImages] = useState<Array<{ url: string; altText: string; isPrimary: boolean }>>(
+    initialProduct?.images && initialProduct.images.length > 0
+      ? initialProduct.images
+      : []
+  );
   const [newImageUrl, setNewImageUrl] = useState("");
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -76,30 +105,52 @@ export function ProductForm({ categories }: ProductFormProps) {
   };
 
   // Colors state
-  const [colors, setColors] = useState<Array<{ name: string; hexCode: string }>>([
-    { name: "بيج | Beige", hexCode: "#E8D8C8" },
-    { name: "أسود | Black", hexCode: "#1A1A1A" },
-  ]);
+  const [colors, setColors] = useState<Array<{ name: string; hexCode: string }>>(
+    initialProduct?.colors && initialProduct.colors.length > 0
+      ? initialProduct.colors
+      : [
+          { name: "بيج | Beige", hexCode: "#E8D8C8" },
+          { name: "أسود | Black", hexCode: "#1A1A1A" },
+        ]
+  );
   const [newColorName, setNewColorName] = useState("");
   const [newColorHex, setNewColorHex] = useState("#C9A96E");
 
   // Sizes state
-  const [sizes, setSizes] = useState<Array<{ name: string; displayOrder: number }>>([
-    { name: "S", displayOrder: 0 },
-    { name: "M", displayOrder: 1 },
-    { name: "L", displayOrder: 2 },
-  ]);
+  const [sizes, setSizes] = useState<Array<{ name: string; displayOrder: number }>>(
+    initialProduct?.sizes && initialProduct.sizes.length > 0
+      ? initialProduct.sizes
+      : [
+          { name: "S", displayOrder: 0 },
+          { name: "M", displayOrder: 1 },
+          { name: "L", displayOrder: 2 },
+        ]
+  );
   const [newSizeName, setNewSizeName] = useState("");
 
   // Variants matrix (combination of colors x sizes with stock)
-  const [variantStocks, setVariantStocks] = useState<Record<string, { stock: number; sku: string }>>({
-    "بيج | Beige-S": { stock: 5, sku: "" },
-    "بيج | Beige-M": { stock: 5, sku: "" },
-    "بيج | Beige-L": { stock: 0, sku: "" },
-    "أسود | Black-S": { stock: 3, sku: "" },
-    "أسود | Black-M": { stock: 0, sku: "" },
-    "أسود | Black-L": { stock: 0, sku: "" },
-  });
+  const initialStocks: Record<string, { stock: number; sku: string }> = {};
+  if (initialProduct?.variants) {
+    for (const v of initialProduct.variants) {
+      initialStocks[`${v.colorName}-${v.sizeName}`] = {
+        stock: v.stock,
+        sku: v.sku || "",
+      };
+    }
+  }
+
+  const [variantStocks, setVariantStocks] = useState<Record<string, { stock: number; sku: string }>>(
+    initialProduct
+      ? initialStocks
+      : {
+          "بيج | Beige-S": { stock: 5, sku: "" },
+          "بيج | Beige-M": { stock: 5, sku: "" },
+          "بيج | Beige-L": { stock: 0, sku: "" },
+          "أسود | Black-S": { stock: 3, sku: "" },
+          "أسود | Black-M": { stock: 0, sku: "" },
+          "أسود | Black-L": { stock: 0, sku: "" },
+        }
+  );
 
   // Auto-generate slug from name
   const handleNameChange = (val: string) => {
@@ -247,7 +298,7 @@ export function ProductForm({ categories }: ProductFormProps) {
     }
 
     try {
-      const result = await createProduct({
+      const payload = {
         name,
         slug,
         description: description || undefined,
@@ -268,7 +319,11 @@ export function ProductForm({ categories }: ProductFormProps) {
         colors,
         sizes,
         variants: variantsPayload,
-      });
+      };
+
+      const result = initialProduct
+        ? await updateProduct(initialProduct.id, payload)
+        : await createProduct(payload);
 
       if (!result.success) {
         setErrorMessage(result.error || "حدث خطأ أثناء حفظ المنتج");
@@ -789,7 +844,11 @@ export function ProductForm({ categories }: ProductFormProps) {
           disabled={isSubmitting}
           className="text-xs h-10 sm:h-9 bg-[var(--primary)] text-[var(--primary-foreground)] hover:bg-[var(--primary)]/90 px-6 font-medium w-full sm:w-auto"
         >
-          {isSubmitting ? "جاري الحفظ..." : "حفظ ونشر المنتج | Save Product"}
+          {isSubmitting
+            ? "جاري الحفظ..."
+            : initialProduct
+            ? "حفظ التعديلات | Update Product"
+            : "حفظ ونشر المنتج | Save Product"}
         </Button>
       </div>
     </form>
